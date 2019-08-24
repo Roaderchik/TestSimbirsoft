@@ -18,13 +18,12 @@ Route::get('/', function () {
 });
 
 
-//Auth::routes();
-Auth::routes([ 'register' => false ]);
+Auth::routes();
 
-//if (\App\User::count()<=0) {
-    Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
-    Route::post('register', 'Auth\RegisterController@register');
-//}
+Route::any('/send', 'MessageController@Send')->name('message.send');
+Route::any('/send/store', 'MessageController@Store')->name('message.send.store');
 
+Route::any('/receive', 'MessageController@Receive')->name('message.receive');
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', function () {    return view('welcome'); });
