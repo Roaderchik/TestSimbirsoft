@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Jobs\ProcessSendMessage;
 use App\Message;
+use App\MessageSender;
 
 
 class MessageController extends Controller
@@ -30,43 +31,41 @@ class MessageController extends Controller
         return view('send');
     }
 
+
+    
+
        /**
      * Store message.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function store(Request $request) 
-    {
+    {   
         $name = (string) $request->input('name','');        
         $email = (string) $request->input('email','');
         $textmessage = (string) $request->input('textmessage','');
-        $message = new Message();
-        $message->textmessage=  $textmessage;
-        $message->email=$email;
-        $message->name=$name;
-        \Debugbar::info($name,$email,$message,now()->addMinutes(10));
-        ProcessSendMessage::dispatch($message)->delay(now()->addMinutes(10));
+        $message = new Message($name,$email,$textmessage);
+        
+        \Debugbar::info($name,$email,$message,$message->toJSON());        
+        $MessageSender = new MessageSender;
+        $MessageSender->set($message);
 
         
-
-        $job = (new ProcessSendMessage($message))
-        ->delay(now()->addMinutes(1));
-
-        dispatch($job);
-
-        \Session::flash('status', 'Сообщение отправлено!'); 
-        return view('send');
         return  redirect()->route('message.send');
     }
     
      /**
-     * Show the receive dashboard.
+     * Show the receive.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function receive()
     {
-        return view('receive');
+         $MessageSender = new MessageSender;
+         $messages=$MessageSender->get();
+      
+        \Debugbar::info($messages); 
+        return view('receive',['messages'=>$messages]);
     }
 
 }

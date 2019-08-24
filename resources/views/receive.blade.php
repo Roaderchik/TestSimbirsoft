@@ -13,7 +13,30 @@
                             {{ session('status') }}
                         </div>
                     @endif
-                       Тут вывод  сообщений в таблице
+
+                    <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Text</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($messages as $message)
+                            <tr>
+                            <th scope="row">{{$loop->iteration}}</th>
+                            <td>{{ $message->name }}</td>
+                            <td>{{ $message->email }}</td>
+                            <td>{{ $message->textmessage }}</td>
+                            </tr>                    
+
+                        @endforeach                        
+                    </tbody>
+                    </table>
+                   
+                       
                 </div>
             </div>
         </div>
