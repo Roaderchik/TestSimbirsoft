@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Jobs\ProcessSendMessage;
+use App\Message;
+
 
 class MessageController extends Controller
 {
@@ -16,7 +19,7 @@ class MessageController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
      /**
      * Show the send dashboard.
      *
@@ -37,8 +40,22 @@ class MessageController extends Controller
         $name = (string) $request->input('name','');        
         $email = (string) $request->input('email','');
         $textmessage = (string) $request->input('textmessage','');
-        \Debugbar::info($name,$email,$textmessage);
+        $message = new Message();
+        $message->textmessage=  $textmessage;
+        $message->email=$email;
+        $message->name=$name;
+        \Debugbar::info($name,$email,$message,now()->addMinutes(10));
+        ProcessSendMessage::dispatch($message)->delay(now()->addMinutes(10));
+
+        
+
+        $job = (new ProcessSendMessage($message))
+        ->delay(now()->addMinutes(1));
+
+        dispatch($job);
+
         \Session::flash('status', 'Сообщение отправлено!'); 
+        return view('send');
         return  redirect()->route('message.send');
     }
     
