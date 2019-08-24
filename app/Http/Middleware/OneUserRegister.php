@@ -15,6 +15,10 @@ class OneUserRegister
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+        if   (\App\User::count()<=0) {
+            return $next($request);
+        } else {
+            return redirect('login');
+        }        
     }
 }

@@ -21,10 +21,10 @@ Route::get('/', function () {
 //Auth::routes();
 Auth::routes([ 'register' => false ]);
 
-if (\App\User::count()<=0) {
+//if (\App\User::count()<=0) {
     Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
     Route::post('register', 'Auth\RegisterController@register');
-}
+//}
 
 
 Route::get('/home', 'HomeController@index')->name('home');
