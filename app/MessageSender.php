@@ -10,13 +10,12 @@ class MessageSender
         }
         public function get() {
             $messages=[];
-            
+
             \Amqp::consume('queue-name', function ($message, $resolver)  use (&$messages) {
                 $messages[]=json_decode($message->body);               
-                //$resolver->acknowledge($message);
+                $resolver->acknowledge($message);
                 $resolver->stopWhenProcessed();
-            });
-            var_dump($messages);
+            });            
             return $messages;
         }
     }
